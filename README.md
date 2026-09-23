@@ -3,226 +3,449 @@
 
 ### AI-Assisted Criminal Investigation & Network Analysis Platform
 
-VigilNODE is an AI-assisted investigation platform designed to transform text- and voice-based case information into structured entities, relationships, investigation graphs, and rule-based investigative signals.
+VigilNODE is an AI-assisted investigation platform designed to help investigators organize case information, extract entities and relationships from reports, visualize criminal networks, and identify potentially significant investigative patterns.
 
-The platform combines secure authentication, case management, speech-to-text, NLP-based extraction, graph-based relationship analysis, and an investigator-focused dashboard into a unified workflow.
-
-> **Project Type:** Academic / Hackathon Prototype
+The platform combines secure authentication, case management, natural language processing, voice transcription, graph-based relationship analysis, and rule-based anomaly detection into a unified workflow.
 
 ---
 
-## Overview
+## 🚨 Overview
 
-Investigative reports can contain large amounts of interconnected information, including people, locations, vehicles, organizations, and other entities.
+Traditional investigations often require investigators to manually review large amounts of information and cross-reference people, locations, organizations, vehicles, communications, and financial details.
 
-Finding meaningful relationships between these entities manually can be time-consuming. VigilNODE addresses this problem by processing investigation reports and representing extracted information as a case-specific graph.
+VigilNODE provides a centralized workspace where investigators can:
 
-### Core Workflow
+- Create and manage investigation cases
+- Submit text-based reports
+- Convert voice reports into text
+- Extract important entities and relationships
+- Build case-specific criminal network graphs
+- Explore connections between entities
+- Identify rule-based investigative signals
+- Keep cases isolated between different users
+- Secure access through multi-step authentication
+
+---
+
+## 🔄 Investigation Workflow
 
 ```text
-                 Text / Voice Report
-                         │
-                         ▼
-                  Speech-to-Text
-                     (Whisper)
-                         │
-                         ▼
-              NLP + Rule-Based Extraction
-                 (spaCy + Regex)
-                         │
-                         ▼
-              Entities & Relationships
-                         │
-                         ▼
-                Neo4j Investigation Graph
-                         │
-                         ▼
-                  Graph Analysis
-                         │
-                         ▼
-              Investigator Dashboard
+                 ┌─────────────────────┐
+                 │   Investigator      │
+                 └──────────┬──────────┘
+                            │
+                    Text / Voice Report
+                            │
+                            ▼
+                 ┌─────────────────────┐
+                 │  Speech-to-Text     │
+                 │      Whisper        │
+                 └──────────┬──────────┘
+                            │
+                            ▼
+                 ┌─────────────────────┐
+                 │ NLP Entity &        │
+                 │ Relationship        │
+                 │ Extraction          │
+                 │ spaCy + Regex       │
+                 └──────────┬──────────┘
+                            │
+                            ▼
+                 ┌─────────────────────┐
+                 │   Neo4j Graph       │
+                 │     Database        │
+                 └──────────┬──────────┘
+                            │
+              ┌─────────────┴─────────────┐
+              ▼                           ▼
+     ┌─────────────────┐         ┌─────────────────┐
+     │ Network         │         │ Investigative   │
+     │ Visualization   │         │ Rule Engine     │
+     └────────┬────────┘         └────────┬────────┘
+              │                           │
+              └─────────────┬─────────────┘
+                            ▼
+                 ┌─────────────────────┐
+                 │ Investigation       │
+                 │ Dashboard            │
+                 └─────────────────────┘
 ```
 
 ---
 
-# Key Features
+## ✨ Key Features
 
 ### 🔐 Secure Authentication
 
-- Email/password authentication
-- Email OTP verification
-- Password reset
+- Email and password authentication
+- Fresh email OTP verification during login
+- Email OTP verification during signup
+- Password reset workflow
 - HTTP-only authentication cookies
-- Supabase-based authentication
-- HMAC-SHA256 OTP protection
-- AES-256-GCM protected pending authentication state
-- Rate limiting
-- Helmet security headers
+- Server-side session handling
+- OTP hashing using HMAC-SHA256
+- Pending authentication session encryption using AES-256-GCM
+- Rate limiting for authentication endpoints
+- Secure authentication event logging
 
 ### 📁 Case Management
 
 - Create and manage investigation cases
 - FIR-based case identification
-- Case-specific data isolation
-- User-level ownership enforcement
-- Investigator profile and case selection
-- Server-side ownership validation
+- Case-specific reports and investigation data
+- Current-user case isolation
+- Case ownership enforced server-side
+- Selected case synchronization across the dashboard
+- Uppercase FIR normalization
 
 ### 🎙️ Voice & Text Investigation
 
-- Text-based report submission
-- Voice-based report submission
-- Speech-to-text using Whisper
-- NLP-based information extraction
-- Rule-based extraction using Python and Regex
+Investigators can submit information through:
 
-### 🧠 Investigation Intelligence
+- Text reports
+- Voice reports
+- Audio transcription
 
-- Entity extraction
-- Relationship extraction
-- Case-specific graph construction
-- Neo4j-powered relationship analysis
-- Interactive graph visualization
-- Rule-based anomaly and investigative signal detection
+Voice reports are processed using speech-to-text before being passed into the investigation pipeline.
 
-### 🗄️ Data Management
+### 🧠 NLP-Based Extraction
 
-- Supabase / PostgreSQL for authentication and structured case data
-- Neo4j for relationship-oriented investigation data
-- Case-level graph isolation
-- Separation of authentication, structured data, and graph analysis
+VigilNODE processes investigation reports to identify relevant information such as:
 
----
+- Persons
+- Locations
+- Organizations
+- Vehicles
+- Phone numbers
+- Other investigative entities
+- Relationships between entities
 
-# System Architecture
+The system combines NLP processing with rule-based extraction techniques.
+
+### 🕸️ Criminal Network Analysis
+
+Extracted information is represented as a graph using Neo4j.
+
+Example:
 
 ```text
-┌───────────────────────────────────────────────────────────────┐
-│                     AUTHENTICATION LAYER                     │
-└───────────────────────────────────────────────────────────────┘
-
-        ┌──────────────────────┐
-        │   React Auth Client  │
-        │      Port 5173       │
-        └──────────┬───────────┘
-                   │
-                   ▼
-        ┌──────────────────────┐
-        │   Node.js / Express  │
-        │      Port 5000       │
-        └──────────┬───────────┘
-                   │
-                   ▼
-        ┌──────────────────────┐
-        │    Supabase Auth     │
-        │      + PostgreSQL    │
-        └──────────────────────┘
-
-
-┌───────────────────────────────────────────────────────────────┐
-│                  INVESTIGATION & ANALYSIS                    │
-└───────────────────────────────────────────────────────────────┘
-
-        ┌──────────────────────┐
-        │ Investigation UI     │
-        │ React / Vite :5174   │
-        └──────────┬───────────┘
-                   │
-                   ▼
-        ┌──────────────────────┐
-        │   FastAPI Backend    │
-        │      Port 8000       │
-        └───────┬────────┬─────┘
-                │        │
-                ▼        ▼
-       ┌────────────┐  ┌────────────┐
-       │  Supabase  │  │   Neo4j    │
-       │ PostgreSQL │  │  Graph DB  │
-       └────────────┘  └────────────┘
+        PERSON
+          │
+       KNOWS
+          │
+          ▼
+        PERSON
+          │
+      TRANSFER
+          │
+          ▼
+       ACCOUNT
+          │
+       LINKED_TO
+          │
+          ▼
+     ORGANIZATION
 ```
 
-### Architecture Principle
+This allows investigators to explore relationships that may be difficult to identify from isolated records.
 
-> **Supabase stores what the case contains.**  
-> **Neo4j represents how the case information is connected.**
+### 📊 Graph Visualization
 
-This separation allows structured application data and relationship-oriented investigation data to be handled independently.
+The investigation graph provides a visual representation of:
+
+- People
+- Organizations
+- Locations
+- Vehicles
+- Accounts
+- Relationships
+- Case-specific connections
+
+Investigators can explore the network interactively and inspect connected entities.
+
+### ⚠️ Investigative Signals
+
+VigilNODE includes rule-based detection for potentially significant patterns.
+
+Examples include:
+
+- Unusual relationship patterns
+- Repeated connections
+- Suspicious network structures
+- Multiple entities connected through common relationships
+
+These signals are intended to support investigation and human review rather than automatically determine conclusions.
 
 ---
 
-# Technology Stack
+# 🏗️ System Architecture
 
-| Layer | Technologies |
+```text
+┌──────────────────────────────────────────────┐
+│              React + Vite Frontend           │
+│                                              │
+│  Authentication │ Cases │ Reports │ Graph   │
+└───────────────────────┬──────────────────────┘
+                        │
+                        ▼
+┌──────────────────────────────────────────────┐
+│             Node.js + Express                │
+│                                              │
+│ Authentication │ OTP │ Sessions │ Security  │
+└───────────────────────┬──────────────────────┘
+                        │
+                        ▼
+                 ┌─────────────┐
+                 │  Supabase   │
+                 │             │
+                 │ Auth + Data │
+                 └─────────────┘
+
+
+┌──────────────────────────────────────────────┐
+│              React Model Frontend             │
+└───────────────────────┬──────────────────────┘
+                        │
+                        ▼
+┌──────────────────────────────────────────────┐
+│               Python + FastAPI               │
+│                                              │
+│ Whisper │ NLP │ Extraction │ Rules │ Graph  │
+└───────────────┬──────────────────────┬───────┘
+                │                      │
+                ▼                      ▼
+        ┌──────────────┐       ┌──────────────┐
+        │    Neo4j     │       │ Investigation│
+        │ Graph DB     │       │   Pipeline   │
+        └──────────────┘       └──────────────┘
+```
+
+---
+
+# 🛠️ Technology Stack
+
+| Layer | Technology |
 |---|---|
-| Frontend | React, Vite, Tailwind CSS |
-| Graph Visualization | Cytoscape |
-| Authentication API | Node.js, Express |
-| Authentication | Supabase Auth |
-| Investigation API | Python, FastAPI |
+| Frontend | React + Vite |
+| Styling | Tailwind CSS |
+| Authentication Server | Node.js + Express |
+| AI / Processing Backend | Python + FastAPI |
 | Speech-to-Text | Whisper |
 | NLP | spaCy |
-| Rule Engine | Python, Regex |
-| Structured Database | Supabase / PostgreSQL |
+| Rule Engine | Python + Regex |
 | Graph Database | Neo4j |
-| Graph Query Language | Cypher |
-| Email | Nodemailer, Brevo SMTP |
-| Security | HTTP-only Cookies, Helmet, Rate Limiting, HMAC-SHA256, AES-256-GCM |
-| Infrastructure | Docker |
-| Version Control | Git, GitHub |
+| Structured Database | Supabase |
+| Graph Visualization | Cytoscape |
+| Email | Nodemailer + SMTP |
+| Security | Helmet, Rate Limiting, HTTP-only Cookies |
+| Containerization | Docker |
 
 ---
 
-# Project Structure
+# 📂 Project Structure
 
 ```text
 VigilNODE/
 │
 ├── secure-auth-app/
 │   ├── client/
-│   │   └── React authentication frontend
+│   │   └── React Authentication Frontend
 │   │
 │   ├── server/
-│   │   └── Express authentication backend
+│   │   └── Express Authentication Backend
 │   │
 │   └── supabase/
-│       └── Database migrations
+│       └── Database Migrations
 │
 ├── criminal-network-platform/
 │   ├── frontend/
-│   │   └── React investigation dashboard
+│   │   └── React Investigation Dashboard
 │   │
 │   └── backend/
-│       ├── app/
-│       │   ├── dependencies/
-│       │   ├── models/
-│       │   ├── routers/
-│       │   └── services/
-│       │
-│       └── requirements.txt
+│       ├── FastAPI Application
+│       ├── NLP Processing
+│       ├── Whisper Integration
+│       ├── Graph Services
+│       └── Investigation Rules
 │
-├── README.md
-└── .gitignore
+├── .gitignore
+└── README.md
 ```
 
 ---
 
-# Getting Started
+# 🔒 Security Architecture
+
+VigilNODE is designed with security and user isolation as core requirements.
+
+### Authentication
+
+```text
+Email + Password
+       │
+       ▼
+Password Verification
+       │
+       ▼
+Fresh Email OTP
+       │
+       ▼
+OTP Verification
+       │
+       ▼
+Authenticated Session
+```
+
+### Security Controls
+
+- HTTP-only cookies
+- Secure authentication sessions
+- HMAC-SHA256 OTP hashing
+- AES-256-GCM encryption for pending authentication sessions
+- Timing-safe OTP comparison
+- Authentication rate limiting
+- Helmet security headers
+- Server-side ownership validation
+- Supabase authentication
+- Row-level security for protected data
+- Server-only authentication challenge tables
+
+---
+
+# 👤 Case & User Isolation
+
+Each case is associated with the authenticated user's profile.
+
+```text
+User A
+ ├── FIR-2026-ARREST-101
+ └── FIR-2026-FRAUD-202
+
+User B
+ └── FIR-2026-BETA-999
+```
+
+Users cannot access or modify cases belonging to another user.
+
+Case ownership is enforced server-side using the authenticated user's profile identity rather than relying only on frontend state.
+
+---
+
+# 🗄️ Data Architecture
+
+VigilNODE uses two complementary data layers.
+
+### Supabase
+
+Stores structured application information such as:
+
+- Users
+- Profiles
+- Cases
+- FIR information
+- Authentication events
+- Case metadata
+
+### Neo4j
+
+Stores investigation relationships such as:
+
+- People
+- Organizations
+- Locations
+- Vehicles
+- Accounts
+- Connections
+- Case-specific graph relationships
+
+### Simple Model
+
+```text
+Supabase
+   │
+   ├── Who owns the case?
+   ├── What is the case?
+   └── What structured information belongs to it?
+   
+Neo4j
+   │
+   ├── Who is connected to whom?
+   ├── What entities are related?
+   └── How is the investigation network connected?
+```
+
+---
+
+# 🧠 Investigation Processing Pipeline
+
+```text
+Report
+  │
+  ├── Text
+  │
+  └── Voice
+       │
+       ▼
+   Whisper
+       │
+       ▼
+ Transcribed Text
+       │
+       ▼
+ Entity Extraction
+       │
+       ▼
+Relationship Extraction
+       │
+       ▼
+ Graph Construction
+       │
+       ▼
+ Neo4j
+       │
+       ├── Network Visualization
+       │
+       └── Rule-Based Analysis
+                    │
+                    ▼
+          Investigative Signals
+```
+
+---
+
+# 🐳 Neo4j with Docker
+
+Neo4j is used as the graph database for investigation networks.
+
+The local development environment runs Neo4j inside Docker.
+
+Default ports:
+
+```text
+Neo4j Browser → 7474
+Neo4j Bolt    → 7687
+```
+
+Docker provides the isolated environment used to run the Neo4j database locally.
+
+---
+
+# 🚀 Local Development
 
 ## Prerequisites
 
-Install the following before running VigilNODE locally:
+Install:
 
 - Node.js
 - npm
 - Python 3.x
-- Git
 - Docker Desktop
-- A Supabase project
 - Neo4j
+- Supabase project
 
 ---
 
-# 1. Clone the Repository
+## 1. Clone the Repository
 
 ```bash
 git clone https://github.com/ayusht0507/VigilNODE.git
@@ -231,112 +454,77 @@ cd VigilNODE
 
 ---
 
-# 2. Authentication Application
+## 2. Install Authentication Dependencies
 
-The authentication service consists of a React frontend and a Node.js / Express backend.
+### Terminal 1 — Authentication Backend
 
-### Install frontend dependencies
+```powershell
+cd secure-auth-app/server
+npm install
+npm run dev
+```
+
+### Terminal 2 — Authentication Frontend
 
 ```powershell
 cd secure-auth-app/client
 npm install
+npm run dev
 ```
-
-### Install backend dependencies
-
-```powershell
-cd ../server
-npm install
-```
-
-### Configure environment variables
-
-Use the provided `.env.example` files as templates.
-
-Create the required `.env` files locally and provide your own credentials.
-
-**Never commit real credentials, API keys, passwords, encryption keys, or authentication secrets to GitHub.**
 
 ---
 
-# 3. Investigation Backend
+## 3. Install Investigation Backend
 
-Navigate to the FastAPI backend:
-
-```powershell
-cd ../../criminal-network-platform/backend
-```
-
-Create a Python virtual environment:
+### Terminal 3 — FastAPI Backend
 
 ```powershell
+cd criminal-network-platform/backend
+
 python -m venv .venv
-```
 
-Activate it on Windows:
-
-```powershell
 .\.venv\Scripts\Activate.ps1
+
+pip install -r requirements.txt
+
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Install Python dependencies:
+---
+
+## 4. Install Investigation Frontend
+
+### Terminal 4 — React Frontend
 
 ```powershell
-pip install -r requirements.txt
+cd criminal-network-platform/frontend
+npm install
+npm run dev -- --port 5174
 ```
 
-Configure the required environment variables using:
+---
+
+# 🌐 Local Application
+
+Authentication application:
 
 ```text
-.env.example
+http://localhost:5173
 ```
 
----
+Investigation dashboard:
 
-# 4. Investigation Frontend
-
-Navigate to the investigation frontend:
-
-```powershell
-cd ../frontend
+```text
+http://localhost:5174
 ```
 
-Install dependencies:
+FastAPI backend:
 
-```powershell
-npm install
+```text
+http://localhost:8000
 ```
 
-For local development, configure:
-
-```env
-VITE_API_BASE=http://localhost:8000
-VITE_AUTH_API_URL=http://localhost:5000
-VITE_AUTH_APP_URL=http://localhost:5173
-```
-
----
-
-# 5. Neo4j Setup
-
-VigilNODE uses **Neo4j** as the graph database for investigation relationships.
-
-Make sure Docker Desktop is running.
-
-Check the running containers:
-
-```powershell
-docker ps
-```
-
-Neo4j uses the following ports:
-
-| Port | Purpose |
-|---:|---|
-| 7474 | Neo4j Browser |
-| 7687 | Neo4j Bolt Protocol |
-
-Neo4j can be accessed locally through:
+Neo4j Browser:
 
 ```text
 http://localhost:7474
@@ -344,289 +532,149 @@ http://localhost:7474
 
 ---
 
-# Running VigilNODE
+# 🔑 Environment Variables
 
-VigilNODE uses four application processes during local development.
+Create environment files locally using the provided example environment files.
 
-## Terminal 1 — Authentication Backend
+Never commit real credentials, API keys, passwords, SMTP credentials, encryption keys, or Supabase service-role keys to Git.
 
-```powershell
-cd "VigilNODE/secure-auth-app/server"
-npm run dev
-```
-
-Runs on:
+Example structure:
 
 ```text
-http://localhost:5000
+secure-auth-app/
+├── client/
+│   └── .env
+│
+└── server/
+    └── .env
+
+criminal-network-platform/
+├── frontend/
+│   └── .env
+│
+└── backend/
+    └── .env
 ```
+
+Environment files containing secrets should remain local and must not be uploaded to GitHub.
 
 ---
 
-## Terminal 2 — Authentication Frontend
+# 🧪 Testing
 
-```powershell
-cd "VigilNODE/secure-auth-app/client"
-npm run dev
-```
+The project includes testing for:
 
-Runs on:
-
-```text
-http://localhost:5173
-```
-
----
-
-## Terminal 3 — Investigation Backend
-
-```powershell
-cd "VigilNODE/criminal-network-platform/backend"
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
-```
-
-Runs on:
-
-```text
-http://localhost:8000
-```
-
----
-
-## Terminal 4 — Investigation Frontend
-
-```powershell
-cd "VigilNODE/criminal-network-platform/frontend"
-npm run dev -- --port 5174
-```
-
-Runs on:
-
-```text
-http://localhost:5174
-```
-
----
-
-# Local Services
-
-| Service | Address |
-|---|---|
-| Authentication Frontend | `http://localhost:5173` |
-| Authentication Backend | `http://localhost:5000` |
-| Investigation Frontend | `http://localhost:5174` |
-| Investigation Backend | `http://localhost:8000` |
-| Neo4j Browser | `http://localhost:7474` |
-| Neo4j Bolt | `localhost:7687` |
-
----
-
-# Data Architecture
-
-VigilNODE separates authentication, structured application data, and relationship-oriented investigation data.
-
-### Supabase
-
-Used for:
-
-- Authentication
-- User profiles
-- Structured case information
-- Case ownership
-- Application data
-
-### Neo4j
-
-Used for:
-
-- Investigation entities
-- Relationships
-- Case-specific graph representation
-- Graph-based analysis
-
-In simple terms:
-
-> **Supabase stores what the case contains.**
-
-> **Neo4j represents how the case information is connected.**
-
----
-
-# Security Architecture
-
-VigilNODE incorporates multiple security mechanisms:
-
-- Supabase authentication
+- Authentication flow
 - Email OTP verification
-- HTTP-only cookies
-- HMAC-SHA256 OTP protection
-- AES-256-GCM protected pending authentication state
-- Rate limiting
-- Helmet security headers
-- Server-side case ownership validation
-- User-level case isolation
-- Environment-based secret management
+- Password reset
+- Session handling
+- Protected API access
+- Case ownership
+- Multi-user case isolation
+- Graph isolation
+- Case-specific data access
+- Neo4j connectivity
+- Backend health
+- Frontend/backend integration
 
-### Secret Management
-
-Environment files containing credentials are excluded from version control.
-
-The repository provides `.env.example` files containing the expected configuration variables without exposing actual secrets.
-
-**Never commit:**
+A key security requirement is:
 
 ```text
-.env
-API keys
-Passwords
-SMTP credentials
-JWT secrets
-Encryption keys
-Service-role keys
-Private case data
+User A → Can access User A's cases
+User B → Can access User B's cases
+User A → Cannot access User B's cases
+User B → Cannot access User A's cases
 ```
 
 ---
 
-# Case & User Isolation
+# 📌 Current Scope
 
-Each investigation case is associated with its authenticated owner.
-
-The application performs server-side ownership checks so that users can only access cases belonging to their account.
-
-Conceptually:
-
-```text
-User A
- ├── FIR-2026-CASE-001
- └── FIR-2026-CASE-002
-
-User B
- └── FIR-2026-CASE-003
-```
-
-The application prevents User A from accessing User B's cases through client-side manipulation alone.
-
----
-
-# Investigation Processing
-
-A report follows this general processing pipeline:
-
-```text
-Input
- │
- ├── Text
- │
- └── Voice
-       │
-       ▼
-   Transcription
-     (Whisper)
-       │
-       ▼
-   Text Processing
-       │
-       ▼
- Entity Extraction
-   (spaCy / Regex)
-       │
-       ▼
-Relationship Extraction
-       │
-       ▼
- Case-Specific Graph
-       │
-       ▼
-   Neo4j / Cypher
-       │
-       ▼
-Graph Visualization
-       │
-       ▼
-Investigative Signals
-```
-
-The system is designed to assist investigators in organizing and exploring complex relationships within a case.
-
----
-
-# Current Scope
-
-The current implementation includes:
+The current VigilNODE implementation includes:
 
 - Secure authentication
 - Email OTP verification
 - Password reset
 - Case management
-- User and case isolation
-- Text reports
-- Voice reports
-- Speech-to-text
+- FIR-based case identification
+- Text report processing
+- Voice report transcription
 - NLP-based entity extraction
 - Relationship extraction
-- Case-specific graph construction
-- Neo4j graph storage
+- Neo4j graph construction
 - Interactive graph visualization
 - Rule-based investigative signals
+- Supabase structured data
+- User-level case isolation
 
 ---
 
-# Limitations
+# ⚠️ Current Limitations
 
-VigilNODE is currently an **academic and prototype implementation**.
+VigilNODE is currently a prototype intended for demonstration and development.
 
-A production deployment would require additional work including:
+Before production deployment, additional work would be required in areas such as:
 
-- Production infrastructure and high availability
-- Comprehensive monitoring and observability
-- Additional security hardening
-- Formal access-control policies
-- Larger-scale performance testing
-- Improved entity resolution
-- Validation against representative datasets
-- Integration with authorized external systems
-- Operational, legal, and compliance requirements
-
-The current system should therefore be considered a prototype rather than a production-ready national investigation platform.
+- Large-scale infrastructure
+- High availability
+- Advanced monitoring
+- Production-grade logging
+- Comprehensive security auditing
+- Deployment hardening
+- Performance optimization
+- Extensive model evaluation
+- Integration with authorized government systems
+- Data governance and retention policies
+- Comprehensive testing with real-world datasets
 
 ---
 
-# Future Scope
+# 🔮 Future Scope
 
-Potential future improvements include:
+Potential future development includes:
 
-- Integration with authorized investigation systems
 - Advanced graph analytics
 - Improved entity resolution
-- Expanded investigative rules
-- Large-scale deployment
-- Production monitoring and observability
-- Role-based access control
+- Multilingual speech and text processing
+- Additional investigative rules
+- Explainable AI-assisted insights
+- Advanced anomaly detection
+- Secure integration with authorized external systems
+- Distributed deployment
+- Real-time investigation collaboration
 - Enhanced audit and compliance capabilities
-- Improved model evaluation and benchmarking
 
 ---
 
-# Important Note
+# ⚖️ Responsible Use
 
-VigilNODE is an **AI-assisted investigation and analysis prototype**.
+VigilNODE is designed as an investigative decision-support platform.
 
-Extracted entities, relationships, anomalies, and investigative signals are intended to support investigative workflows. They should not be treated as automatic determinations of criminal activity, guilt, or legal conclusions.
+AI-generated entities, relationships, patterns, and investigative signals should be reviewed and verified by authorized investigators before being used in any operational or legal context.
+
+The platform is intended to assist human investigators, not replace human judgment or due process.
 
 ---
 
-# Project Status
+# 📊 Project Status
 
 **Status:** Active Prototype
 
-The project is being developed as an academic/hackathon-oriented system demonstrating secure authentication, AI-assisted information extraction, case management, and graph-based investigation analysis.
+VigilNODE currently demonstrates an integrated workflow covering authentication, case management, report processing, NLP extraction, graph-based investigation, and user-level data isolation.
 
 ---
 
-# License
+# 👥 Project
 
-This project is developed as an academic and prototype project.
+**VigilNODE**
 
-See the repository for the applicable project licensing terms.
+**AI-Assisted Criminal Investigation & Network Analysis Platform**
+
+Built as a technology prototype for intelligent investigation, relationship discovery, and case analysis.
+
+---
+
+## 📄 License
+
+This project is intended for educational, research, and prototype development purposes.
 ```
